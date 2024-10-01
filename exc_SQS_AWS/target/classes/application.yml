@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: us-west-2
+    credentials:
+      access-key: LOCALSTACK_AUTH_TOKEN
+      secret-key: teste
+    end-point:
+      uri: http://localhost:4566
