@@ -29,9 +29,8 @@ class WebAppConfigurationTest {
         Configuration configuration = RootConfig.class.getAnnotation(Configuration.class);
         ComponentScan componentScan = RootConfig.class.getAnnotation(ComponentScan.class);
         String[] packages = componentScan.basePackages();
-        if (packages.length == 0) {
-            packages = componentScan.value();
-        }
+
+        if (packages.length == 0) packages = componentScan.value();
 
         assertNotNull(configuration);
         assertNotNull(componentScan);

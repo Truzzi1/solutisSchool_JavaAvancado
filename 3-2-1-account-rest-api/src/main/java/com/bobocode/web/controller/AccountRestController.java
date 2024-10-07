@@ -3,66 +3,64 @@ package com.bobocode.web.controller;
 import com.bobocode.dao.AccountDao;
 import com.bobocode.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 /**
- * <p>
- * todo: 1. Configure rest controller that handles requests with url "/accounts"
- * todo: 2. Inject {@link AccountDao} implementation
- * todo: 3. Implement method that handles GET request and returns a list of accounts
- * todo: 4. Implement method that handles GET request with id as path variable and returns account by id
- * todo: 5. Implement method that handles POST request, receives account as request body, saves account and returns it
- * todo:    Configure HTTP response status code 201 - CREATED
- * todo: 6. Implement method that handles PUT request with id as path variable and receives account as request body.
- * todo:    It check if account id and path variable are the same and throws {@link IllegalStateException} otherwise.
- * todo:    Then it saves received account. Configure HTTP response status code 204 - NO CONTENT
- * todo: 7. Implement method that handles DELETE request with id as path variable removes an account by id
- * todo:    Configure HTTP response status code 204 - NO CONTENT
+ * Rest controller that handles requests with url "/accounts"
  */
-@RestController // Define o controlador como um REST Controller
-@RequestMapping("/accounts") // Define o caminho base para as requisições
+@RestController
+@RequestMapping("/Account")
 public class AccountRestController {
 
-    private final AccountDao accountDao;
+  // Inject AccountDao implementation
+  private final AccountDao accountDao;
 
-    @Autowired
-    public AccountRestController(AccountDao accountDao) {
-        this.accountDao = accountDao;
-    }
+  @Autowired
+  public AccountRestController(AccountDao accountDao) {
+    this.accountDao = accountDao;
+  }
 
-    @GetMapping // Handle GET request for all accounts
-    public List<Account> getAllAccounts() {
-        return accountDao.findAll();
-    }
+  // Handle GET request and return a list of accounts
+  @GetMapping
+  public List<Account> getAllAccounts() {
+    return accountDao.findAll();
+  }
 
-    @GetMapping("/{id}") // Handle GET request for a specific account by ID
-    public Account getAccountById(@PathVariable long id) {
-        return accountDao.findById(id);
-    }
+  // Handle GET request with id as path variable and return account by id
+  @GetMapping("/{id}")
+  public Account getAccountById(@PathVariable Long id) {
+    return accountDao.findById(id);
+  }
 
-    @PostMapping // Handle POST request to save a new account
-    @ResponseStatus(CREATED) // Return 201 status code
-    public Account createAccount(@RequestBody Account account) {
-        return accountDao.save(account);
-    }
+  // Handle POST request, receive account as request body, save account and return it
+  // Configure HTTP response status code 201 - CREATED
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Account createAccount(@RequestBody Account account) {
+    accountDao.save(account);
+    return account;
+  }
 
-    @PutMapping("/{id}") // Handle PUT request to update an account
-    @ResponseStatus(NO_CONTENT) // Return 204 status code
-    public void updateAccount(@PathVariable Long id, @RequestBody Account account) {
-        if (!id.equals(account.getId())) {
-            throw new IllegalStateException("ID mismatch");
-        }
-        accountDao.save(account);
+  // Handle PUT request with id as path variable and receive account as request body
+  // Check if account id and path variable are the same and throw IllegalStateException otherwise
+  // Configure HTTP response status code 204 - NO CONTENT
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateAccount(@PathVariable Long id, @RequestBody Account account) {
+    if (!account.getId().equals(id)) {
+      throw new IllegalStateException("Account ID in the path does not match the account ID in the request body");
     }
+    accountDao.save(account);
+  }
 
-    @DeleteMapping("/{id}") // Handle DELETE request to remove an account by ID
-    @ResponseStatus(NO_CONTENT) // Return 204 status code
-    public void deleteAccount(@PathVariable long id) {
-        accountDao.remove(accountDao.findById(id));
-    }
+  // Handle DELETE request with id as path variable, remove account by id
+  // Configure HTTP response status code 204 - NO CONTENT
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteAccount(@PathVariable Long id) {
+    accountDao.remove(getAccountById(id));
+  }
 }

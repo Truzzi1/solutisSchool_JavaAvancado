@@ -4,7 +4,7 @@ import com.bobocode.model.Account;
 
 import java.util.List;
 
-public interface AccountDao{
+public interface AccountDao {
     List<Account> findAll();
 
     Account findById(long id);

@@ -3,27 +3,21 @@ package com.bobocode.dao.impl;
 import com.bobocode.dao.AccountDao;
 import com.bobocode.exception.EntityNotFountException;
 import com.bobocode.model.Account;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 /**
  * {@link AccountDao} implementation that is based on {@link java.util.HashMap}.
  * <p>
  * todo: 1. Configure a component with name "accountDao"
  */
-
-@ComponentScan
-@Service
+@Component("accountDao") // Define como um componente do Spring
 public class InMemoryAccountDao implements AccountDao {
-    private Map<Long, Account> accountMap = new HashMap<>();
+    private final Map<Long, Account> accountMap = new HashMap<>();
     private long idSequence = 1L;
 
     @Override
@@ -34,17 +28,13 @@ public class InMemoryAccountDao implements AccountDao {
     @Override
     public Account findById(long id) {
         Account account = accountMap.get(id);
-        if (account == null) {
-            throw new EntityNotFountException(String.format("Cannot found account by id = %d", id));
-        }
+        if (account == null) throw new EntityNotFountException(String.format("Cannot found account by id = %d", id));
         return account;
     }
 
     @Override
     public Account save(Account account) {
-        if (account.getId() == null) {
-            account.setId(idSequence++);
-        }
+        if (account.getId() == null) account.setId(idSequence++);
         accountMap.put(account.getId(), account);
         return account;
     }
